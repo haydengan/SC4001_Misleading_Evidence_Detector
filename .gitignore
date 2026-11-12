@@ -1,0 +1,8 @@
+.venv/
+.DS_Store
+__pycache__/
+# model weights (too big for GitHub)
+runs/*/model/
+runs_plain_deberta/*/model/
+# generated data (rebuild with run_all.sh)
+data/

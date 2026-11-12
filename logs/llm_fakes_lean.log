@@ -1,0 +1,30 @@
+[dev] 300 jobs to run (0 done)
+W1111 23:00:16.858000 81355 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<03:31,  1.59it/s]Loading weights:  97%|█████████▋| 327/338 [00:00<00:00, 600.14it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 459.37it/s]
+[dev] 8/300 valid so far 6
+[dev] 88/300 valid so far 42
+[dev] 168/300 valid so far 73
+[dev] 248/300 valid so far 109
+[dev] done, valid 128/300
+[train] 1500 jobs to run (0 done)
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:02<13:29,  2.40s/it]Loading weights:  51%|█████     | 172/338 [00:02<00:01, 96.17it/s]Loading weights:  80%|███████▉  | 270/338 [00:03<00:00, 92.94it/s]Loading weights:  97%|█████████▋| 327/338 [00:04<00:00, 91.97it/s]Loading weights: 100%|██████████| 338/338 [00:04<00:00, 79.61it/s]
+[train] 8/1500 valid so far 3
+[train] 88/1500 valid so far 45
+[train] 168/1500 valid so far 84
+[train] 248/1500 valid so far 117
+[train] 328/1500 valid so far 156
+[train] 408/1500 valid so far 181
+[train] 488/1500 valid so far 210
+[train] 568/1500 valid so far 249
+[train] 648/1500 valid so far 277
+[train] 728/1500 valid so far 310
+[train] 808/1500 valid so far 352
+[train] 888/1500 valid so far 389
+[train] 968/1500 valid so far 423
+[train] 1048/1500 valid so far 457
+[train] 1128/1500 valid so far 490
+[train] 1208/1500 valid so far 518
+[train] 1288/1500 valid so far 545
+[train] 1368/1500 valid so far 580
+[train] 1448/1500 valid so far 618
+[train] done, valid 641/1500

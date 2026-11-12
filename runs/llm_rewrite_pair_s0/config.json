@@ -1,0 +1,13 @@
+{
+ "gen": "llm_rewrite",
+ "regime": "pair",
+ "qblind": false,
+ "seed": 0,
+ "epochs": 3,
+ "lr": 5e-05,
+ "bs": 16,
+ "max_len": 320,
+ "accum": 2,
+ "force": false,
+ "tag": ""
+}

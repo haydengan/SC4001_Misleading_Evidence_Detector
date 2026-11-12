@@ -1,0 +1,25 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+W1112 01:53:05.960000 86636 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 22591.27it/s]
+[nli_swap_mismatch_base_s0] ep0 step0/213 loss 5.135 1s mem 0.9G
+[nli_swap_mismatch_base_s0] ep0 step50/213 loss 1.025 68s mem 0.9G
+[nli_swap_mismatch_base_s0] ep0 step100/213 loss 0.910 144s mem 0.9G
+[nli_swap_mismatch_base_s0] ep0 step150/213 loss 0.570 225s mem 0.9G
+[nli_swap_mismatch_base_s0] ep0 step200/213 loss 0.673 300s mem 0.9G
+[nli_swap_mismatch_base_s0] epoch 0 dev macro-F1 0.5442
+[nli_swap_mismatch_base_s0] ep1 step0/213 loss 0.461 344s mem 0.9G
+[nli_swap_mismatch_base_s0] ep1 step50/213 loss 0.625 424s mem 0.9G
+[nli_swap_mismatch_base_s0] ep1 step100/213 loss 0.654 496s mem 0.9G
+[nli_swap_mismatch_base_s0] ep1 step150/213 loss 0.801 576s mem 0.9G
+[nli_swap_mismatch_base_s0] ep1 step200/213 loss 0.616 656s mem 0.9G
+[nli_swap_mismatch_base_s0] epoch 1 dev macro-F1 0.7896
+[nli_swap_mismatch_base_s0] ep2 step0/213 loss 0.468 695s mem 0.9G
+[nli_swap_mismatch_base_s0] ep2 step50/213 loss 0.824 777s mem 0.9G
+[nli_swap_mismatch_base_s0] ep2 step100/213 loss 0.580 857s mem 0.9G
+[nli_swap_mismatch_base_s0] ep2 step150/213 loss 0.045 939s mem 0.9G
+[nli_swap_mismatch_base_s0] ep2 step200/213 loss 0.024 1014s mem 0.9G
+[nli_swap_mismatch_base_s0] epoch 2 dev macro-F1 0.8464
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  4.75it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  4.71it/s]
+[nli_swap_mismatch_base_s0] done in 1502s

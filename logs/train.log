@@ -1,0 +1,124 @@
+exists, skip swap_mismatch_base_s0
+exists, skip swap_mismatch_pair_s0
+exists, skip swap_mismatch_qblind_s0
+W1112 04:50:28.472000 91832 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 14050.83it/s]
+[swap_mismatch_placebo_s0] ep0 step0/213 loss 2.689 2s mem 0.9G
+[swap_mismatch_placebo_s0] ep0 step50/213 loss 0.926 83s mem 0.9G
+[swap_mismatch_placebo_s0] ep0 step100/213 loss 0.587 163s mem 0.9G
+[swap_mismatch_placebo_s0] ep0 step150/213 loss 0.356 249s mem 0.9G
+[swap_mismatch_placebo_s0] ep0 step200/213 loss 0.733 333s mem 0.9G
+[swap_mismatch_placebo_s0] epoch 0 dev macro-F1 0.6310
+[swap_mismatch_placebo_s0] ep1 step0/213 loss 0.475 376s mem 0.9G
+[swap_mismatch_placebo_s0] ep1 step50/213 loss 0.371 456s mem 0.9G
+[swap_mismatch_placebo_s0] ep1 step100/213 loss 0.520 541s mem 0.9G
+[swap_mismatch_placebo_s0] ep1 step150/213 loss 0.502 624s mem 0.9G
+[swap_mismatch_placebo_s0] ep1 step200/213 loss 0.575 704s mem 0.9G
+[swap_mismatch_placebo_s0] epoch 1 dev macro-F1 0.5534
+[swap_mismatch_placebo_s0] ep2 step0/213 loss 0.684 745s mem 0.9G
+[swap_mismatch_placebo_s0] ep2 step50/213 loss 0.424 825s mem 0.9G
+[swap_mismatch_placebo_s0] ep2 step100/213 loss 0.676 908s mem 0.9G
+[swap_mismatch_placebo_s0] ep2 step150/213 loss 0.472 987s mem 0.9G
+[swap_mismatch_placebo_s0] ep2 step200/213 loss 0.559 1067s mem 0.9G
+[swap_mismatch_placebo_s0] epoch 2 dev macro-F1 0.6260
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.30it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.29it/s]
+[swap_mismatch_placebo_s0] done in 2576s
+exists, skip mix_base_s0
+exists, skip mix_pair_s0
+exists, skip llm_rewrite_base_s0
+exists, skip llm_rewrite_pair_s0
+W1112 05:33:37.679000 92595 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 14566.42it/s]
+[swap_typed_base_s0] ep0 step0/213 loss 3.977 2s mem 0.9G
+[swap_typed_base_s0] ep0 step50/213 loss 1.006 105s mem 0.9G
+[swap_typed_base_s0] ep0 step100/213 loss 0.755 214s mem 0.9G
+[swap_typed_base_s0] ep0 step150/213 loss 0.342 319s mem 0.9G
+[swap_typed_base_s0] ep0 step200/213 loss 0.600 432s mem 0.9G
+[swap_typed_base_s0] epoch 0 dev macro-F1 0.5491
+[swap_typed_base_s0] ep1 step0/213 loss 0.702 489s mem 0.9G
+[swap_typed_base_s0] ep1 step50/213 loss 0.476 598s mem 0.9G
+[swap_typed_base_s0] ep1 step100/213 loss 0.461 714s mem 0.9G
+[swap_typed_base_s0] ep1 step150/213 loss 0.465 823s mem 0.9G
+[swap_typed_base_s0] ep1 step200/213 loss 0.541 932s mem 0.9G
+[swap_typed_base_s0] epoch 1 dev macro-F1 0.5424
+[swap_typed_base_s0] ep2 step0/213 loss 0.645 995s mem 0.9G
+[swap_typed_base_s0] ep2 step50/213 loss 0.683 1108s mem 0.9G
+[swap_typed_base_s0] ep2 step100/213 loss 0.438 1223s mem 0.9G
+[swap_typed_base_s0] ep2 step150/213 loss 0.257 1334s mem 0.9G
+[swap_typed_base_s0] ep2 step200/213 loss 0.488 1445s mem 0.9G
+[swap_typed_base_s0] epoch 2 dev macro-F1 0.6843
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  4.10it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  4.08it/s]
+[swap_typed_base_s0] done in 2152s
+W1112 06:09:35.629000 93336 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 12983.94it/s]
+[swap_typed_pair_s0] ep0 step0/213 loss 3.008 3s mem 0.9G
+[swap_typed_pair_s0] ep0 step50/213 loss 0.927 109s mem 0.9G
+[swap_typed_pair_s0] ep0 step100/213 loss 0.405 214s mem 0.9G
+[swap_typed_pair_s0] ep0 step150/213 loss 0.570 327s mem 0.9G
+[swap_typed_pair_s0] ep0 step200/213 loss 0.330 430s mem 0.9G
+[swap_typed_pair_s0] epoch 0 dev macro-F1 0.6199
+[swap_typed_pair_s0] ep1 step0/213 loss 0.705 486s mem 0.9G
+[swap_typed_pair_s0] ep1 step50/213 loss 0.523 593s mem 0.9G
+[swap_typed_pair_s0] ep1 step100/213 loss 0.482 693s mem 0.9G
+[swap_typed_pair_s0] ep1 step150/213 loss 0.644 792s mem 0.9G
+[swap_typed_pair_s0] ep1 step200/213 loss 0.533 891s mem 0.9G
+[swap_typed_pair_s0] epoch 1 dev macro-F1 0.6622
+[swap_typed_pair_s0] ep2 step0/213 loss 0.575 945s mem 0.9G
+[swap_typed_pair_s0] ep2 step50/213 loss 0.389 1046s mem 0.9G
+[swap_typed_pair_s0] ep2 step100/213 loss 0.260 1147s mem 0.9G
+[swap_typed_pair_s0] ep2 step150/213 loss 0.584 1446s mem 0.9G
+[swap_typed_pair_s0] ep2 step200/213 loss 0.606 1794s mem 0.9G
+[swap_typed_pair_s0] epoch 2 dev macro-F1 0.6820
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.90it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.87it/s]
+[swap_typed_pair_s0] done in 2441s
+W1112 06:50:20.725000 94412 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 13718.30it/s]
+[test] 746/1492 records kept (valid llm fake)
+swap_mismatch {'n': 300, 'share_fake_q': 0.12190477795627279, 'share_bystander_q': 0.1154093349732769, 'span_token_frac': 0.025074490243466356, 'ratio_q_over_by': 1.05628178157772}
+swap_typed {'n': 300, 'share_fake_q': 0.11215949167191866, 'share_bystander_q': 0.09450646156542158, 'span_token_frac': 0.023810044453386196, 'ratio_q_over_by': 1.1867917792507432}
+llm_rewrite {'n': 230, 'share_fake_q': 0.09164683386802411, 'share_bystander_q': 0.07408420816285323, 'span_token_frac': 0.021312439610456195, 'ratio_q_over_by': 1.2370630143817478}
+W1112 06:52:31.052000 94455 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 17616.84it/s]
+[test] 746/1492 records kept (valid llm fake)
+swap_mismatch {'n': 300, 'share_fake_q': 0.039731072886922146, 'share_bystander_q': 0.025148950817044047, 'span_token_frac': 0.025074490243466356, 'ratio_q_over_by': 1.5798302353033131}
+swap_typed {'n': 300, 'share_fake_q': 0.048441188750827376, 'share_bystander_q': 0.023825149360733728, 'span_token_frac': 0.023810044453386196, 'ratio_q_over_by': 2.033195595854832}
+llm_rewrite {'n': 230, 'share_fake_q': 0.050788821628995486, 'share_bystander_q': 0.02682308049191741, 'span_token_frac': 0.021312439610456195, 'ratio_q_over_by': 1.8934746008870855}
+W1112 06:54:37.216000 94496 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 15615.76it/s]
+[test] 746/1492 records kept (valid llm fake)
+swap_mismatch {'n': 300, 'share_fake_q': 0.03756378570110731, 'share_bystander_q': 0.02906882640432741, 'span_token_frac': 0.025074490243466356, 'ratio_q_over_by': 1.2922360599847016}
+swap_typed {'n': 300, 'share_fake_q': 0.03623061846347506, 'share_bystander_q': 0.027691478431030796, 'span_token_frac': 0.023810044453386196, 'ratio_q_over_by': 1.3083670687252071}
+llm_rewrite {'n': 230, 'share_fake_q': 0.038158976877394196, 'share_bystander_q': 0.02727023290695481, 'span_token_frac': 0.021312439610456195, 'ratio_q_over_by': 1.3992904647199547}
+W1112 06:56:43.869000 94531 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 19854.25it/s]
+[test] 746/1492 records kept (valid llm fake)
+swap_mismatch {'n': 300, 'share_fake_q': 0.029743688168327936, 'share_bystander_q': 0.01932311191231444, 'span_token_frac': 0.025074490243466356, 'ratio_q_over_by': 1.5392804380216087}
+swap_typed {'n': 300, 'share_fake_q': 0.033242653128836536, 'share_bystander_q': 0.01746182878392877, 'span_token_frac': 0.023810044453386196, 'ratio_q_over_by': 1.9037326238951477}
+llm_rewrite {'n': 230, 'share_fake_q': 0.03992854955735232, 'share_bystander_q': 0.019804907598375828, 'span_token_frac': 0.021312439610456195, 'ratio_q_over_by': 2.0160937060179367}
+                       mismatch|TPR  typed|TPR  llm|TPR  mismatch|FAR_by  typed|FAR_by  llm|FAR_by  mismatch|DiD  typed|DiD  llm|DiD  nqswap|TPR  nqswap|CS  faitheval|TPR  FAR_orig  irr_acc
+train_gen     regime                                                                                                                                                                         
+llm_rewrite   base            0.540      0.531    0.563            0.508         0.521       0.527        -0.032     -0.055   -0.028       0.368     -0.020          0.540     0.547    0.947
+              pair            0.647      0.626    0.625            0.395         0.391       0.414         0.020      0.003   -0.021       0.644     -0.004          0.478     0.610    0.950
+mix           base            0.322      0.287    0.276            0.296         0.284       0.307         0.038      0.015   -0.019       0.628     -0.012          0.740     0.198    0.947
+              pair            0.424      0.397    0.363            0.196         0.196       0.208         0.076      0.050    0.004       0.342      0.006          0.072     0.334    0.955
+swap_mismatch base            0.655      0.367    0.210            0.567         0.359       0.206         0.102      0.021    0.017       0.150      0.082          0.016     0.051    0.964
+              pair            0.484      0.382    0.318            0.225         0.218       0.197         0.200      0.105    0.062       0.288      0.044          0.124     0.251    0.972
+              placebo         0.245      0.235    0.227            0.272         0.264       0.295         0.004      0.001   -0.038       0.696     -0.016          0.600     0.221    0.916
+              qblind          0.432      0.390    0.351            0.432         0.390       0.351         0.000      0.000    0.000       0.390      0.066          0.000     0.315    0.568
+swap_typed    base            0.310      0.269    0.229            0.235         0.233       0.204         0.070      0.031    0.020       0.302      0.024          0.296     0.185    0.970
+              pair            0.706      0.689    0.678            0.408         0.399       0.406         0.024      0.015   -0.003       0.628     -0.004          0.268     0.666    0.956
+PIPELINE_DONE

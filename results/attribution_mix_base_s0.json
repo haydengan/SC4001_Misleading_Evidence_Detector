@@ -1,0 +1,23 @@
+{
+ "swap_mismatch": {
+  "n": 300,
+  "share_fake_q": 0.03756378570110731,
+  "share_bystander_q": 0.02906882640432741,
+  "span_token_frac": 0.025074490243466356,
+  "ratio_q_over_by": 1.2922360599847016
+ },
+ "swap_typed": {
+  "n": 300,
+  "share_fake_q": 0.03623061846347506,
+  "share_bystander_q": 0.027691478431030796,
+  "span_token_frac": 0.023810044453386196,
+  "ratio_q_over_by": 1.3083670687252071
+ },
+ "llm_rewrite": {
+  "n": 230,
+  "share_fake_q": 0.038158976877394196,
+  "share_bystander_q": 0.02727023290695481,
+  "span_token_frac": 0.021312439610456195,
+  "ratio_q_over_by": 1.3992904647199547
+ }
+}
