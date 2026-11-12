@@ -28,19 +28,24 @@ def load(name):
 def make_collate(tok, qblind, max_len):
     def collate(batch):
         qs = ["" if qblind else b["q"] for b in batch]
+        # cross-document mode: first segment = question + independent reference snippet; candidate passage second
+        qs = [q + f" {tok.sep_token} Reference: " + b["ref"] if b.get("ref") else q for q, b in zip(qs, batch)]
         # pad to a multiple of 64: few distinct shapes, so the MPS allocator cache does not keep growing
-        enc = tok(qs, [b["p"] for b in batch], truncation="only_second", max_length=max_len,
-                  padding=True, pad_to_multiple_of=64, return_tensors="pt")
+        kw = dict(max_length=max_len, padding=True, pad_to_multiple_of=64, return_tensors="pt")
+        try:
+            enc = tok(qs, [b["p"] for b in batch], truncation="only_second", **kw)
+        except Exception:  # question+reference alone exceeds max_len (rare, cross-document mode): trim both
+            enc = tok(qs, [b["p"] for b in batch], truncation="longest_first", **kw)
         enc["labels"] = torch.tensor([b["label"] for b in batch])
         return enc
     return collate
 
 
 @torch.no_grad()
-def predict(model, rows, collate, bs=64):
+def predict(model, rows, collate, bs=32):
     model.eval()
     # length-sort for speed, then restore order
-    order = sorted(range(len(rows)), key=lambda i: len(rows[i]["p"]))
+    order = sorted(range(len(rows)), key=lambda i: len(rows[i]["p"]) + len(rows[i].get("ref", "")))
     probs = np.zeros((len(rows), 3), dtype=np.float32)
     for s in range(0, len(rows), bs):
         idx = order[s:s + bs]
@@ -102,18 +107,20 @@ def main(a):
         if f1 > best:
             best, best_state = f1, {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
     model.load_state_dict(best_state)
+    if a.seed == 0:  # save before testing so a test-time failure does not lose the run
+        model.save_pretrained(out / "model"); tok.save_pretrained(out / "model")
 
     test = load("test_squad.jsonl") + load("test_external.jsonl")
+    if (SETS / "test_squad_bm25.jsonl").exists():
+        test += load("test_squad_bm25.jsonl")
     p = predict(model, test, collate)
     with open(out / "preds.jsonl", "w") as f:
         for d, pr in zip(test, p):
             f.write(json.dumps({"uid": d["uid"], "gen": d["gen"], "kind": d["kind"], "type": d["type"],
-                                "label": d["label"], "p": [round(float(x), 5) for x in pr]}) + "\n")
+                                "label": d["label"], "corr": d.get("corr"), "p": [round(float(x), 5) for x in pr]}) + "\n")
     json.dump({"history": hist, "best_dev_macro_f1": best, "train_time_s": time.time() - t0},
               open(out / "metrics_dev.json", "w"), indent=1)
     json.dump(vars(a), open(out / "config.json", "w"), indent=1)
-    if a.seed == 0:
-        model.save_pretrained(out / "model"); tok.save_pretrained(out / "model")
     print(f"[{name}] done in {time.time() - t0:.0f}s", flush=True)
 
 

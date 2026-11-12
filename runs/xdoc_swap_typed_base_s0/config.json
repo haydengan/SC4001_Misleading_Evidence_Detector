@@ -1,0 +1,13 @@
+{
+ "gen": "swap_typed",
+ "regime": "base",
+ "qblind": false,
+ "seed": 0,
+ "epochs": 3,
+ "lr": 5e-05,
+ "bs": 16,
+ "max_len": 448,
+ "accum": 4,
+ "force": false,
+ "tag": "xdoc_"
+}

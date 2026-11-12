@@ -1,0 +1,97 @@
+W1112 16:57:05.643000 1450 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 12016.76it/s]
+[xdoc_swap_typed_base_s0] ep0 step0/213 loss 3.783 3s mem 0.9G
+[xdoc_swap_typed_base_s0] ep0 step50/213 loss 1.061 171s mem 0.9G
+[xdoc_swap_typed_base_s0] ep0 step100/213 loss 1.224 346s mem 0.9G
+[xdoc_swap_typed_base_s0] ep0 step150/213 loss 0.639 516s mem 0.9G
+[xdoc_swap_typed_base_s0] ep0 step200/213 loss 0.704 692s mem 0.9G
+[xdoc_swap_typed_base_s0] epoch 0 dev macro-F1 0.5140
+[xdoc_swap_typed_base_s0] ep1 step0/213 loss 0.931 784s mem 0.9G
+[xdoc_swap_typed_base_s0] ep1 step50/213 loss 0.355 954s mem 0.9G
+[xdoc_swap_typed_base_s0] ep1 step100/213 loss 0.509 1123s mem 0.9G
+[xdoc_swap_typed_base_s0] ep1 step150/213 loss 0.573 1286s mem 0.9G
+[xdoc_swap_typed_base_s0] ep1 step200/213 loss 0.824 1445s mem 0.9G
+[xdoc_swap_typed_base_s0] epoch 1 dev macro-F1 0.5891
+[xdoc_swap_typed_base_s0] ep2 step0/213 loss 0.613 1534s mem 0.9G
+[xdoc_swap_typed_base_s0] ep2 step50/213 loss 0.671 1696s mem 0.9G
+[xdoc_swap_typed_base_s0] ep2 step100/213 loss 0.616 1864s mem 0.9G
+[xdoc_swap_typed_base_s0] ep2 step150/213 loss 0.189 2026s mem 0.9G
+[xdoc_swap_typed_base_s0] ep2 step200/213 loss 0.318 2189s mem 0.9G
+[xdoc_swap_typed_base_s0] epoch 2 dev macro-F1 0.6767
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  6.11it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  6.09it/s]
+[xdoc_swap_typed_base_s0] done in 6506s
+Could not reach the Hub ([Errno 8] nodename nor servname provided, or not known). Using cached commit hash for 'cross-encoder/nli-deberta-v3-small'.
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main/additional_chat_templates
+Retrying in 1s [Retry 1/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main/additional_chat_templates
+Retrying in 2s [Retry 2/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main/additional_chat_templates
+Retrying in 4s [Retry 3/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main/additional_chat_templates
+Retrying in 8s [Retry 4/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main/additional_chat_templates
+Retrying in 8s [Retry 5/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main/additional_chat_templates
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main
+Retrying in 1s [Retry 1/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main
+Retrying in 2s [Retry 2/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main
+Retrying in 4s [Retry 3/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main
+Retrying in 8s [Retry 4/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main
+Retrying in 8s [Retry 5/5].
+'[Errno 8] nodename nor servname provided, or not known' thrown while requesting GET https://huggingface.co/api/models/cross-encoder/nli-deberta-v3-small/tree/main
+Could not reach the Hub ([Errno 8] nodename nor servname provided, or not known). Using cached commit hash for 'cross-encoder/nli-deberta-v3-small'.
+W1112 18:46:21.800000 2571 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 18092.14it/s]
+[xdoc_swap_mismatch_base_s0] ep0 step0/213 loss 6.959 2s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep0 step50/213 loss 1.321 127s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep0 step100/213 loss 0.721 261s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep0 step150/213 loss 0.825 400s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep0 step200/213 loss 1.486 9792s mem 0.9G
+[xdoc_swap_mismatch_base_s0] epoch 0 dev macro-F1 0.5742
+[xdoc_swap_mismatch_base_s0] ep1 step0/213 loss 0.617 17310s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep1 step50/213 loss 0.471 19259s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep1 step100/213 loss 0.867 19379s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep1 step150/213 loss 0.750 19503s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep1 step200/213 loss 0.732 19632s mem 0.9G
+[xdoc_swap_mismatch_base_s0] epoch 1 dev macro-F1 0.5431
+[xdoc_swap_mismatch_base_s0] ep2 step0/213 loss 0.576 19703s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep2 step50/213 loss 0.329 19836s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep2 step100/213 loss 0.524 19972s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep2 step150/213 loss 0.427 20107s mem 0.9G
+[xdoc_swap_mismatch_base_s0] ep2 step200/213 loss 0.126 20246s mem 0.9G
+[xdoc_swap_mismatch_base_s0] epoch 2 dev macro-F1 0.7335
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.17it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.16it/s]
+[xdoc_swap_mismatch_base_s0] done in 21901s
+W1113 00:51:29.530000 4097 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 14351.54it/s]
+[xdoc_llm_rewrite_base_s0] ep0 step0/213 loss 4.799 3s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep0 step50/213 loss 1.085 180s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep0 step100/213 loss 1.178 354s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep0 step150/213 loss 0.864 532s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep0 step200/213 loss 0.208 745s mem 0.9G
+[xdoc_llm_rewrite_base_s0] epoch 0 dev macro-F1 0.5205
+[xdoc_llm_rewrite_base_s0] ep1 step0/213 loss 0.765 877s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep1 step50/213 loss 0.009 1072s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep1 step100/213 loss 0.540 1255s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep1 step150/213 loss 0.709 1434s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep1 step200/213 loss 0.527 1615s mem 0.9G
+[xdoc_llm_rewrite_base_s0] epoch 1 dev macro-F1 0.6252
+[xdoc_llm_rewrite_base_s0] ep2 step0/213 loss 0.376 1713s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep2 step50/213 loss 0.422 1901s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep2 step100/213 loss 0.298 2076s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep2 step150/213 loss 0.362 2273s mem 0.9G
+[xdoc_llm_rewrite_base_s0] ep2 step200/213 loss 0.499 2452s mem 0.9G
+[xdoc_llm_rewrite_base_s0] epoch 2 dev macro-F1 0.6075
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  7.34it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  7.31it/s]
+[xdoc_llm_rewrite_base_s0] done in 4397s
+XDOC_DONE
