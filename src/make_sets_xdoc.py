@@ -2,7 +2,7 @@
 
 Reference for a (question, passage) example is retrieved for THAT question (bystander examples get the bystander
 question's reference), so the model can check the candidate against independent evidence.
-Writes data/sets_xdoc/{train,dev}_{gen}_base.jsonl, test_squad.jsonl (good-retriever refs),
+Writes data/sets_xdoc/{train,dev}_{gen}_{base,pair}.jsonl, test_squad.jsonl (good-retriever refs),
 test_squad_bm25.jsonl (keyword-retrieval refs), test_external.jsonl (no reference available).
 """
 import json, random, zlib
@@ -37,9 +37,12 @@ def main():
     refs = {s: json.load(open(ROOT / "data" / f"refs_{s}.json")) for s in ["train", "dev", "test"]}
     tr, dv, te = M.load_split("train"), M.load_split("dev"), M.load_split("test")
     for gen in M.GENS + ["mix"]:
-        dump(attach(M.train_examples(tr, gen, "base", random.Random(zlib.crc32(f"{gen}base".encode()))), refs["train"]),
-             f"train_{gen}_base.jsonl")
-        dump(attach(M.train_examples(dv, gen, "base", random.Random(1)), refs["dev"]), f"dev_{gen}_base.jsonl")
+        # pair = 50% of supporting examples are bystanders (fake passage + untouched question, with that
+        # question's own reference): teaches "conflicts with the article, but not about MY question -> supporting"
+        for regime in ["base", "pair"]:
+            dump(attach(M.train_examples(tr, gen, regime, random.Random(zlib.crc32(f"{gen}{regime}".encode()))),
+                        refs["train"]), f"train_{gen}_{regime}.jsonl")
+            dump(attach(M.train_examples(dv, gen, regime, random.Random(1)), refs["dev"]), f"dev_{gen}_{regime}.jsonl")
     dump(attach(M.test_examples(te), refs["test"]), "test_squad.jsonl")
     bm = attach(M.test_examples(te), refs["test"], "_bm25")
     for x in bm:

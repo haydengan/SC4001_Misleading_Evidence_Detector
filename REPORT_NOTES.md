@@ -218,6 +218,14 @@ Findings:
 4. **A reference can dilute an easy cue.** For the mismatch-trained model, the longer input weakened the
    type-mismatch fingerprint. LLM-trained models learned little in either setting (dev macro-F1 0.61).
 
+5. **Pair training + reference (tried to fix finding 2) failed.**
+   - Bystander false flags fell from 24% to 6%, but fake-vs-original AUROC fell back to ≈0.53.
+   - Detection at a 10% false-alarm rate fell to 13% (same-type) and 12% (LLM).
+   - Fake-vs-bystander AUROC was 0.61 in *both* the corroborated and non-corroborated groups, so the model
+     separated the two kinds of questions without using the evidence: the same question shortcut as in
+     Section 6.4.
+   - Run `xdoc_swap_typed_pair_s0`.
+
 **Conclusion.** Supplying independent evidence turns undetectable same-type and LLM fakes into partially
 detectable ones (AUROC ≈0.70), but only when corroborating evidence exists. It is still not reliable at low
 false-alarm rates. Next steps: more data, question-aware conflict training (a bystander-with-reference pair

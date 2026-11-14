@@ -1,0 +1,24 @@
+W1113 07:31:28.330000 10115 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+/Users/hayden/SC4001_Project/.venv/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 15460.45it/s]
+[xdoc_swap_typed_pair_s0] ep0 step0/213 loss 2.364 3s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep0 step50/213 loss 1.055 125s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep0 step100/213 loss 1.014 249s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep0 step150/213 loss 0.547 380s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep0 step200/213 loss 0.546 522s mem 0.9G
+[xdoc_swap_typed_pair_s0] epoch 0 dev macro-F1 0.5972
+[xdoc_swap_typed_pair_s0] ep1 step0/213 loss 0.506 599s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep1 step50/213 loss 0.653 742s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep1 step100/213 loss 0.901 886s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep1 step150/213 loss 0.693 1025s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep1 step200/213 loss 0.418 1172s mem 0.9G
+[xdoc_swap_typed_pair_s0] epoch 1 dev macro-F1 0.6688
+[xdoc_swap_typed_pair_s0] ep2 step0/213 loss 0.477 1258s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep2 step50/213 loss 0.235 1411s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep2 step100/213 loss 0.396 1575s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep2 step150/213 loss 0.443 1744s mem 0.9G
+[xdoc_swap_typed_pair_s0] ep2 step200/213 loss 0.635 1895s mem 0.9G
+[xdoc_swap_typed_pair_s0] epoch 2 dev macro-F1 0.6547
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  9.09it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  9.05it/s]
+[xdoc_swap_typed_pair_s0] done in 3618s
