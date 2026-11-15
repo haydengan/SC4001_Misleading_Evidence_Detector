@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# Lean pipeline. Every step is resumable and finished training runs are skipped, so re-running is safe.
-# Each training run is ~10-15 min on an Apple M-series laptop; run them one at a time with run_one.sh if preferred.
+# Full pipeline exactly as used for the report. Every step skips work that is already done, so re-running is safe.
+# Tested on an Apple M5 laptop (16 GB, MPS); each training run takes ~25-40 min.
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=.venv/bin/python
-export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.7 PYTORCH_MPS_LOW_WATERMARK_RATIO=0.6  # keep the laptop usable
+export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.8 PYTORCH_MPS_LOW_WATERMARK_RATIO=0.7
 
-# 1) data
+# 1) data: SQuAD records + rule-based fakes, then LLM rewrites (shortest passages) and one sampling retry pass
 [ -f data/records_test.jsonl ] || $PY src/build_data.py
-$PY src/llm_fakes.py --splits test --kinds fake,placebo --max_records test:936  # test: fakes + placebos (936 shortest)
-$PY src/llm_fakes.py                                                        # dev/train: fakes only (shortest passages)
-$PY src/make_sets.py
+$PY src/llm_fakes.py --splits test --kinds fake,placebo --max_records test:936
+$PY src/llm_fakes.py --splits dev,train --kinds fake --max_records dev:300,train:1500
+$PY src/llm_fakes.py --retry --splits test --kinds fake,placebo
+$PY src/llm_fakes.py --retry --splits dev,train --kinds fake
 
-# 2) training: 4 train generators x {base, pair, qblind} + placebo ablation on swap_typed = 13 runs
-for g in swap_mismatch swap_typed llm_rewrite mix; do
-  for r in base pair; do nice -n 10 $PY src/train_eval.py --gen $g --regime $r; done
-  nice -n 10 $PY src/train_eval.py --gen $g --qblind
-done
-nice -n 10 $PY src/train_eval.py --gen swap_typed --regime placebo
+# 2) single-passage experiments (10 runs) + attribution + tables   (Section 4)
+./run_train.sh
 
-# 3) analysis
-for r in swap_typed_base_s0 swap_typed_pair_s0 mix_base_s0 mix_pair_s0; do $PY src/attribution.py --run $r; done
-$PY src/analyze.py
+# 3) cross-document experiments (4 runs) + calibration             (Section 5)
+./run_xdoc.sh
+$PY src/analyze_xdoc.py
+$PY src/calibrate.py
+
+# 4) figures
+$PY src/figures.py

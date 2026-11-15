@@ -9,4 +9,5 @@ export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.8 PYTORCH_MPS_LOW_WATERMARK_RATIO=0.7
 for g in swap_typed swap_mismatch llm_rewrite; do
   SETS_DIR=data/sets_xdoc nice -n 10 $PY src/train_eval.py --gen $g --regime base --tag xdoc_ --max_len 448 --accum 4
 done
+SETS_DIR=data/sets_xdoc nice -n 10 $PY src/train_eval.py --gen swap_typed --regime pair --tag xdoc_ --max_len 448 --accum 4
 echo XDOC_DONE

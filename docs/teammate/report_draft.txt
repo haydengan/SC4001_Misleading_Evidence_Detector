@@ -1,0 +1,360 @@
+SC4001 Neural Networks and Deep Learning
+Group Project
+Group Number: 167
+Gladys Woo Hui Min [U2322572E]
+Gan Yee Hong [U2320111K]
+Content or Fingerprint? Diagnosing Shortcut Learning and Cross-Document Grounding          in Neural Evidence Classifiers
+AI Declaration: We used Claude (Anthropic) as a coding assistant to help implement the data pipeline, training scripts and analysis, and to search related literature. All experimental design decisions, results and interpretations were reviewed and verified by the group.
+1. Introduction
+Retrieval-Augmented Generation (RAG) grounds Large Language Models (LLMs) in external documents to reduce parametric hallucinations. However, RAG pipelines remain vulnerable when retrieved passages contain factual errors, outdated claims, or adversarial injections when context contradicts parametric memory, LLMs overwhelmingly defer to the misleading passage (Longpre et al., 2021; Ming et al., 2024). A natural architectural defence is a lightweight neural evidence classifier placed between the retriever and generator to label each candidate of question and passage pair as supporting, misleading, or irrelevant before answer synthesis (Hong et al., 2024).
+Because naturally occurring counterfactual passages are scarce at scale, evidence classifiers are routinely trained on synthetically fabricated misleading passages generated via entity substitution or LLM rewriting. Standard benchmarks evaluate these classifiers by comparing their predictions on synthetic misleading passages against unaltered original passages. Yet high classification accuracy on this comparison leaves a fundamental question unresolved, which is “Does a trained evidence classifier actually verify whether the passage answers the question truthfully, or does it merely detect surface traces of the synthetic editing process?”.
+If a classifier relies on generator-specific artifacts, such as entity-type clashes like replacing a person's name with a number or local syntactic seams, it will fail under distribution shift when confronted with realistic edits or unseen generators, and it will false-alarm on benignly edited passages. In this project, we formalize and test two competing hypotheses:
+H-content (Semantic Verification): The classifier evaluates question–passage consistency, flagging a passage as misleading only when the answer span targeted by the question has been falsified.
+H-fingerprint (Artifact Detection): The classifier acts as an edit-artifact detector, flagging any passage exhibiting statistical or stylistic traces of the training-time synthetic generator regardless of the question.
+To separate these mechanisms cleanly, we introduce a controlled diagnostic framework built on SQuAD v1.1 (Rajpurkar et al., 2016) spanning three generators of increasing realism, two counterfactual fingerprint controls of bystander and placebo tests, with a 2×2 difference-in-differences (DiD) metric that cancels both edit fingerprints and question-style shortcuts, and gradient x input attribution analysis. We then investigate two targeted interventions: question-conditioned counterfactual pair training and cross-document consistency verification, evaluating both in-domain and on two external RAG conflict benchmarks of NQ-Swap and FaithEval.
+2. Review of Existing Techniques
+Knowledge Conflicts and Evidence Filtering in RAG. Longpre et al. (2021) introduced NQ-Swap, demonstrating that generative QA models readily adopt counterfactual entity substitutions in retrieved context. Ming et al. (2024) extended this analysis with FaithEval, showing that LLMs struggle to maintain faithfulness under counterfactual, inconsistent, and unanswerable contexts. To harden RAG systems without expensive LLM fine-tuning, Hong et al. (2024) proposed training a compact cross-encoder discriminator to filter counterfactual passages prior to generation. More recent conflict-aware RAG frameworks, which includes MIRAGE, ConflictRAG, and CONFACT, where it emphasizes cross-passage corroboration rather than single-passage parametric memorization.
+Shortcut Learning and Counterfactual Data Augmentation. Deep neural classifiers frequently exploit spurious correlations that minimize empirical risk on training distributions without learning the intended task (Geirhos et al., 2020). In Natural Language Inference (NLI), models often rely on lexical overlap or hypothesis-only biases; debiasing methods such as Product-of-Experts (Clark et al., 2019; He et al., 2019) addressed this by down-weighting examples solvable by weak, partial-input models. Counterfactually-Augmented Data (CAD) aims to break spurious correlations by pairing minimally edited examples across labels (Kaushik et al., 2020), though Joshi &amp; He (2021) caution that CAD can inadvertently introduce new edit artifacts or narrow feature coverage if not carefully controlled. Our work bridges these lines of research by applying counterfactual controls and DiD causal estimators to expose generator-fingerprint shortcuts in RAG evidence classifiers.
+3. Methodology and Controlled Experimental Framework
+3.1 Controlled Data Construction &amp; Generator Hierarchy
+We construct our controlled benchmark from SQuAD v1.1 (Rajpurkar et al., 2016). To prevent topic or entity leakage across splits, SQuAD-train is partitioned strictly by Wikipedia article title into train (90%) and dev (10%), while SQuAD-validation serves as our test split. Using spaCy (en_core_web_sm), we map named entities and numeric expressions into six coarse semantic categories: PER, ORG, LOC, DATE, NUM, and MISC. We retain paragraphs containing at least two questions with non-overlapping answer spans so that every primary record (q, a, p) can be paired with a valid bystander question (q_by, a_by) on the exact same paragraph whose answer remains untouched when a is edited, plus a non-answer placebo entity e_pl that does not appear in q or overlap with a or a_by.
+All three in-house fake generators operate on the exact same underlying SQuAD passages, isolating the effect of the fabrication process:
+swap_mismatch (Low Realism / Strong Fingerprint): Replaces all case-insensitive word-boundary occurrences of true answer a with a random entity a'_mis drawn from a different coarse NER category in the same split like replacing a person with a date, creating obvious semantic type clashes.
+swap_typed (Medium Realism / Subtle Fingerprint): Replaces a with an entity a'_typ of the same coarse NER type from the split pool, which mirrors NQ-Swap and preserves entity category while potentially leaving subtle coreference or gender/number inconsistencies.
+llm_rewrite (High Realism / Fluent Rewrite): Prompts a frozen Qwen2.5-1.5B-Instruct model to rewrite the passage so that it states the exact same typed fake entity a'_typ instead of a while adjusting surrounding syntax for global fluency and self-consistency. Outputs are strictly validated: a must be absent, a_by must remain present, and character length ratio must lie within [0.85, 1.30], with a second temperature-0.7 retry pass for failed generations.
+Each record also includes two irrelevant passages: irr_easy, a random paragraph from a different Wikipedia article and irr_hard, a different paragraph from the same Wikipedia article that does not contain a, forcing the classifier beyond keyword/topic matching. Under our laptop compute budget of the Apple M5 and 16 GB unified memory, we select the shortest passages with valid LLM rewrites, yielding 1,135 train, 234 dev, and 746 test records with identical question sets across all generators, plus two external zero-shot benchmarks: NQ-Swap (500 dev triples: original, substituted, irrelevant) and FaithEval-counterfactual (500 test pairs: counterfactual, irrelevant).
+3.2 Diagnostic Controls: Bystander Test, Placebo Test &amp; 2×2 DiD
+Standard evaluations compare P(M | q, fake) against P(M | q, orig). However, because fake has been edited and orig has not, any edit-artifact detector achieves high AUROC without reading the question. We introduce two counterfactual controls and a causal summary metric:
+Bystander Control: We pair the identical fake passage p_fake with the bystander question q_by whose answer a_by was untouched. Because p_fake still truthfully supports q_by, the ground-truth label is supported. Any false alarm FAR_by = P(pred = M | q_by, p_fake) proves the model is reacting to passage edits rather than factual contradiction.
+Placebo Control: We apply the exact same generator to the non-answer entity e_pl, producing p_pl. The passage carries the generator's edit trace while leaving the answer intact (ground-truth label: supporting). Flagging p_pl (FAR_pl) directly measures sensitivity to edit artifacts.
+2×2 Difference-in-Differences (DiD): While naive Content Sensitivity CS = TPR(fake) − FAR_by subtracts passage-level edit bias, CS can be artificially inflated if a model learns a question-only shortcut such as predicting 'supporting' whenever a question resembles a secondary bystander question. Crossing passage status {fake, orig} with question role {target q, bystander q_by} cancels both passage-level edit fingerprints and question-level baseline shifts:
+DiD = [P(pred = M | q, fake) − P(pred = M | q, orig)] − [P(pred = M | q_by, fake) − P(pred = M | q_by, orig)]
+A pure fingerprint detector, which ignores the question, or a question-blind classifier yields DiD = 0, whereas a genuine content-sensitive verifier maximizes DiD.
+3.3 Model Architecture, Training Regimes &amp; Memory Engineering
+We fine-tune cross-encoder/nli-deberta-v3-small of 141M parameters (He et al., 2021) with a 3-way classification head over [CLS] question [SEP] passage [SEP], where the labels are 0 = supporting, 1 = misleading and 2 = irrelevant. Using an NLI-pretrained backbone is essential with preliminary experiments with raw microsoft/deberta-v3-small stalled at cross-entropy loss ≈ 0.46 and AUROC ≈ 0.50 on supporting-vs-misleading separation, as shown in Appendix B. All models are trained for 3 epochs with AdamW  with values of lr = 5×10⁻⁵, weight decay = 0.01, 10% linear warmup, effective batch size = 16, max sequence length = 320, fp32, selecting checkpoints strictly by best dev macro-F1.
+To train reliably within 16 GB unified memory on Apple Silicon (MPS) without swapping, we apply four memory optimizations: 
+Freezing the 128k × 768 token embedding matrix (98M of 141M parameters)
+gradient accumulation of 2 over micro-batches of 8
+Dynamic padding to multiples of 64 to prevent MPS allocator fragmentation
+foreach=False optimizer updates with periodic torch.mps.empty_cache(). We compare five training regimes at identical training set size (3N examples per epoch)
+Table 1: Summary of single-passage training regimes, where all balanced across Supporting, Misleading, and Irrelevant
+Regime
+Supporting Class (Label 0) Composition
+Scientific Purpose
+base
+100% original passages (q, orig)
+Standard supervised baseline
+pair (ours)
+50% (q, orig) + 50% (q_by, fake)
+Breaks edit fingerprint via counterfactual question pairing
+placebo
+50% (q, orig) + 50% (q, placebo)
+Teaches 'edits ≠ misleading' without question-style cues
+mix
+base regime with random generator per record
+Tests whether generator diversity alone cures shortcut learning
+qblind
+base regime with question string set to empty
+Diagnostic probe: measures pure passage-only upper bound
+4. Single-Passage Experiments and Diagnostic Results
+4.1 Baseline Evaluation: High AUROC Masks Fingerprint Reliance
+Table 2 evaluates the standard baseline (swap_mismatch base) across all in-domain and external test sets. On its in-distribution test set, the baseline achieves AUC_orig = 0.890 and 96.4% irrelevant-passage accuracy (92.9% on same-article irr_hard), appearing highly effective by conventional metrics. However, our counterfactual controls expose that 56.7% of bystander pairs are falsely flagged as misleading (FAR_by = 56.7%), nearly matching the 65.5% true positive rate (TPR) on actual fakes. Because the passage text in fake and bystander is byte-for-byte identical, almost all of the model's apparent detection stems from recognizing type-mismatched edits rather than checking the question (DiD = 0.102). Consequently, when evaluated on cleaner generators where the type-mismatch cue disappears, performance collapses: AUC_orig drops to 0.730 on swap_typed, 0.632 on llm_rewrite, 0.553 on NQ-Swap, and TPR falls to 1.6% on FaithEval.
+Table 2: Baseline (swap_mismatch, base regime) cross-generator and external benchmark evaluation (seed 0)
+Train → Test
+TPR (%)
+FAR_orig (%)
+FAR_by (%)
+FAR_pl (%)
+AUC_orig
+AUC_by
+DiD
+mismatch base → mismatch
+65.5
+5.1
+56.7
+47.2
+0.890
+0.568
+0.102
+mismatch base → typed
+36.7
+5.1
+35.9
+33.5
+0.730
+0.489
+0.021
+mismatch base → llm
+21.0
+5.1
+20.6
+19.9
+0.632
+0.466
+0.017
+mismatch base → NQ-Swap
+15.0
+6.8
+-
+-
+0.553
+-
+-
+mismatch base → FaithEval
+1.6
+-
+-
+-
+-
+-
+-
+4.2 Effect of Training Regimes: Pair Training, Mixture &amp; Placebo Ablation
+Table 3 compares all training generators and regimes across our headline 2×2 DiD metric, false alarm rates, and external transfer. Four critical findings emerge from this evaluation.
+Table 3: Full single-passage regime comparison across generators (seed 0)
+Train Gen / Regime
+DiD (mis)
+DiD (typ)
+DiD (llm)
+FAR_by (mis)
+FAR_orig
+NQ-Swap AUC
+FaithEval TPR
+mismatch / base
+0.102
+0.021
+0.017
+56.7%
+5.1%
+0.553
+1.6%
+mismatch / pair (ours)
+0.200
+0.105
+0.062
+22.5%
+25.1%
+0.516
+12.4%
+mismatch / placebo
+0.004
+0.001
+−0.038
+27.2%
+22.1%
+0.502
+60.0%
+mismatch / qblind
+0.000
+0.000
+0.000
+43.2%
+31.5%
+0.527
+0.0%
+mix / base
+0.038
+0.015
+−0.019
+29.6%
+19.8%
+0.505
+74.0%
+mix / pair
+0.076
+0.050
+0.004
+19.6%
+33.4%
+0.499
+7.2%
+typed / base
+0.070
+0.031
+0.020
+23.5%
+18.5%
+0.511
+29.6%
+typed / pair
+0.024
+0.015
+−0.003
+40.8%
+66.6%
+0.505
+26.8%
+llm / base
+−0.032
+−0.055
+−0.028
+50.8%
+54.7%
+0.499
+54.0%
+llm / pair
+0.020
+0.003
+−0.021
+39.5%
+61.0%
+0.494
+47.8%
+Based on Table 3, we observed the following:
+Question-blind probe confirms passage-only separability: Removing the question entirely (mismatch qblind) still achieves AUC_orig = 0.569 on mismatched fakes and 0.545 on typed, with DiD = 0 by construction, confirming that surface passage statistics alone are separately edited from original text.
+Multi-generator mixing does not solve shortcut learning: Training on an equal mixture of all three generators (mix base) lowers DiD on mismatch fakes from 0.102 to 0.038 and yields negative DiD (−0.019) on LLM rewrites. Seeing diverse generators without question-level contrast merely teaches a broader edit detector.
+Pair training doubles genuine content sensitivity: Exposing mismatch pair to bystander examples during training doubles DiD on mismatch (0.102 → 0.200), quintuples DiD on typed swaps (0.021 → 0.105), and triples DiD on LLM rewrites (0.017 → 0.062), while slashing bystander false alarms from 56.7% to 22.5%. Notably, naive CS on typed pair jumps to 0.290, yet its 2×2 DiD is only 0.015, proving that typed pair exploited a question-style shortcut, distinguishing primary vs. bystander question phrasing that our 2x2 DiD estimator successfully exposed.
+Placebo ablation proves an information bottleneck: When mismatched placebo is trained with non-answer edits as supporting examples, both edit fingerprints and question-style shortcuts are removed and DiD collapses to 0.004 chance. Similarly, the typed base of DiD = 0.031 and LLM base of DiD = −0.028 fail to learn.
+Why do single-passage classifiers hit a ceiling on plausible fakes? This is due to the fluent same-type entity swap produces a grammatically valid, internally consistent passage. Without external evidence, determining whether 1954 or 1958 is truthful requires memorizing every world fact in parametric weights, which is an impossible requirement for a 141M-parameter verifier.
+4.3 Gradient × Input Attribution Analysis
+To verify mechanistically whether pair training shifts attention onto the edited span only when queried, we compute gradient x input attribution |∇_e logit_M · e| over passage tokens of n = 300 test records and n = 230 where the exact new entity string appears in llm_rewrite. Table 4 reports the fraction of total passage attribution landing on the inserted fake entity span under the true question q versus the bystander question q_by, where the span tokens constitute only 2.1% to 2.5% of passage tokens.
+Table 4: Gradient x input attribution mass on the inserted fake entity span of true question vs bystander question
+Model
+Test Gen
+Share (True q)
+Share (Bystander q_by)
+Ratio (q / q_by)
+mismatch / base
+mismatch / typed / llm
+12.2% / 11.2% / 9.2%
+11.5% / 9.5% / 7.4%
+1.06× / 1.19× / 1.24×
+mismatch / pair
+mismatch / typed / llm
+4.0% / 4.8% / 5.1%
+2.5% / 2.4% / 2.7%
+1.58× / 2.03× / 1.89×
+mix / base
+mismatch / typed / llm
+3.8% / 3.6% / 3.8%
+2.9% / 2.8% / 2.7%
+1.29× / 1.31× / 1.40×
+mix / pair
+mismatch / typed / llm
+3.0% / 3.3% / 4.0%
+1.9% / 1.7% / 2.0%
+1.54× / 1.90× / 2.02×
+The baseline (mismatch base) concentrates ~12% of its attribution mass on the mismatched span regardless of whether the question asks about it (ratio 1.06x), confirming context-free artifact detection. In contrast, pair-trained models reduce bystander span attribution by ~4x and focus 1.54x to 2.03x more strongly on the edited entity when the target question queries it.
+5. Methodological Extension: Cross-Document Consistency Verification
+5.1 Motivation &amp; Cross-Document Formulation
+Section 4 established that single-passage classifiers fail on realistic same-type and LLM fakes due to a knowledge bottleneck, not insufficient model capacity. Inspired by conflict-aware RAG discriminators, we reformulate verification from 'does this passage match my parametric world knowledge?' to 'does this candidate passage conflict with independent retrieved evidence?'
+For each candidate question and passage pair, we retrieve the top-2 two-sentence windows from other paragraphs of the same Wikipedia article ranked by IDF-weighted content-word overlap with the question, formatting the cross-encoder input as [CLS] question [SEP] Reference: retrieved snippet [SEP] candidate passage [SEP]. Bystander examples receive the reference retrieved for q_by so that the 2x2 DiD remains valid. We evaluate two retrieval conditions and partition the 746 test records into corroborated, where the reference snippet mentions true answer a and non-corroborated subsets:
+Good-Retriever Condition (Main): If any external paragraph in the article mentions a, the highest-overlap answer-bearing window is included in the top-2 reference, yielding 39% corroboration coverage of 289 corroborated and 457 non-corroborated test records.
+Keyword-Retriever Condition (Realistic Check): Pure IDF keyword overlap without answer-presence boosting, yielding 11% corroboration coverage of 71 corroborated and 675 non-corroborated test records).
+5.2 Cross-Document Results, Threshold Calibration &amp; Pair Ablation
+Table 5 reports threshold-free AUROC (fake vs. original passage) across corroborated and non-corroborated test slices, alongside single-passage baselines scored on the exact same splits.
+Table 5: Cross-document AUROC (fake vs. original and fake vs. bystander) split by reference corroboration
+Train Gen
+Reference Condition
+Group (n)
+AUC_orig (mis)
+AUC_orig (typ)
+AUC_orig (llm)
+AUC_by (typ)
+swap_typed
+None (single passage)
+corr (289)
+0.595
+0.573
+0.525
+0.531
+swap_typed
+None (single passage)
+nocorr (457)
+0.610
+0.586
+0.516
+0.537
+swap_typed
+Good retriever
+corr (289)
+0.712
+0.704
+0.644
+0.551
+swap_typed
+Good retriever
+nocorr (457)
+0.578
+0.567
+0.504
+0.581
+swap_typed
+Keyword retriever
+corr (71)
+0.727
+0.694
+0.641
+0.468
+swap_typed
+Keyword retriever
+nocorr (675)
+0.580
+0.569
+0.506
+0.553
+swap_mismatch
+Good retriever
+corr (289)
+0.691
+0.625
+0.569
+0.520
+llm_rewrite
+Good retriever
+corr (289)
+0.621
+0.620
+0.593
+0.478
+The cross-document results provide strong causal confirmation of our knowledge-bottleneck hypothesis, while also revealing subtle operational failure modes:
+Independent evidence unlocks detection precisely where corroboration exists: For the swap_typed model, adding a corroborating reference boosts fake-vs-original AUROC by +0.131 on same-type swaps (0.573 → 0.704) and +0.119 on LLM rewrites (0.525 → 0.644), turning previously undetectable fakes into partially detectable ones. On non-corroborated questions, where the reference lacks the answer, AUROC stays flat at 0.567 and 0.504 (gain ≈ 0). Crucially, the gain holds under realistic keyword-only retrieval of 0.694 on typed and 0.641 on LLM.
+Conflict detection remains passage-level rather than question-level: Fake-vs-bystander AUROC stays near chance of 0.501 to 0.551, meaning the cross-document classifier flags any passage that contradicts the reference article even when the bystander question asks about a non-conflicting fact.
+Default argmax over-flags genuine passages; threshold calibration reveals strict-operating limits: Under standard argmax decoding, xdoc swap_typed flags 32.5% of genuine passages in the corroborated group (and 62.8% in non-corroborated), inflating raw argmax DiD to 0.253. When we calibrate the decision threshold on dev (t = 0.598) to enforce a strict 10% false-alarm rate on genuine passages, corroborated FAR_orig drops to 2.4%, but TPR at this strict operating point is 8.0% on same-type swaps (DiD = 0.045) and 6.6% on LLM rewrites (DiD = 0.042). Thus, cross-document grounding yields substantial ranking improvements (AUROC ~0.70) that require larger training scale or stronger retrieval to translate into high-recall low-FAR operating points.
+Reference dilution &amp; cross-document pair ablation: For swap_mismatch, prepending a long reference dilutes the surface type-clash signal (AUROC drops from 0.872 to 0.691). Combining pair training with cross-document references (xdoc_swap_typed_pair_s0) reduces bystander false alarms from 24% to 6% but drops fake-vs-original AUROC back to ~0.53 while raising fake-vs-bystander AUROC to 0.61 in both corroborated and non-corroborated groups—re-introducing the same question-style shortcut observed in Section 4.2.
+6. Discussion, Failure Cases, and Limitations
+Practical Verdict for RAG Deployment. Standard single-passage evidence classifiers trained on synthetic entity swaps are not ready for unsupervised RAG filtering. While swap_mismatch base achieves 0.89 AUROC on in-distribution fakes, it triggers false alarms on 56.7% of bystander questions and misses 85% to 98% of external NQ-Swap and FaithEval conflicts. Counterfactual pair training doubles genuine question-conditioned sensitivity (DiD 0.102 → 0.200) and sharpens token attribution onto the edited span, but single-passage models remain fundamentally bottlenecked by parametric world knowledge. Cross-document consistency verification resolves this bottleneck whenever corroborating evidence is retrieved of +0.12 to +0.13 AUROC on same-type and LLM fakes, pointing toward retrieval-grounded verification as the viable path forward.
+Across our experiments, we identify three recurring failure modes:
+Edit-fingerprint overfitting, where mismatch base flags fluent bystander passages solely due to entity-type anomalies
+Question-style shortcutting, where typed pair and xdoc typed pair separating primary vs. bystander question syntax without checking passage evidence, caught by our 2×2 DiD
+Un-corroborated blindness &amp; passage-level conflict, where cross-document models default to high false-alarm priors when the reference lacks the answer, or flagging off-topic conflicts on bystander queries
+During this project, we noticed some limitations of this project and potential future work. First, due to laptop compute constraints (Apple M5, 16 GB), all models were trained on a single random seed (seed 0) over the shortest ~1,135 SQuAD passages; multi-seed runs and full-length paragraphs are needed to tighten confidence intervals on small DiD differences (0.02–0.03). Second, LLM rewrites were generated by a compact 1.5B model (Qwen2.5-1.5B-Instruct) with coarse spaCy NER typing, where larger rewrite models and fine-grained entity ontologies would yield cleaner counterfactuals. Third, realistic keyword retrieval corroborated only 11% of test questions, versus 39% under our controlled good-retriever upper bound. Future work should combine dense neural retrieval with question-aware cross-document conflict training, pairing bystander questions with their own independent references at scale.
+References
+Clark, C., Yatskar, M., &amp; Zettlemoyer, L. (2019). Don't Take the Easy Way Out: Ensemble Based Methods for Avoiding Known Dataset Biases. Proceedings of EMNLP-IJCNLP, 4069–4082.
+Geirhos, R., Jacobsen, J.-H., Michaelis, C., Zemel, R., Brendel, W., Bethge, M., &amp; Wichmann, F. A. (2020). Shortcut Learning in Deep Neural Networks. Nature Machine Intelligence, 2(11), 665–673.
+He, H., Zha, S., &amp; Wang, H. (2019). Unlearn Dataset Bias in Natural Language Inference by Fitting the Residual. Proceedings of the 2nd Workshop on Deep Learning Approaches for Low-Resource NLP, 132–142.
+He, P., Gao, J., &amp; Chen, W. (2021). DeBERTaV3: Improving DeBERTa using ELECTRA-Style Pre-Training with Gradient-Disentangled Embedding Sharing. arXiv preprint arXiv:2111.09543.
+Hong, G., Kim, J., Kang, J., Myaeng, S.-H., &amp; Lee, J. (2024). Why So Gullible? Enhancing the Robustness of Retrieval-Augmented Models against Counterfactual Noise. Findings of NAACL 2024, 2474–2495.
+Joshi, N., &amp; He, H. (2021). An Investigation of the (In)effectiveness of Counterfactually Augmented Data. Proceedings of ACL 2022, 3668–3681.
+Kaushik, D., Hovy, E., &amp; Lipton, Z. C. (2020). Learning the Difference that Makes a Difference with Counterfactually-Augmented Data. Proceedings of ICLR 2020.
+Longpre, S., Perisetla, K., Chen, A., Ramesh, N., DuBois, C., &amp; Singh, S. (2021). Entity-Based Knowledge Conflicts in Question Answering. Proceedings of EMNLP 2021, 7052–7063.
+Ming, Y., Purushwalkam, S., Pandit, S., Ke, Z., Nguyen, X.-P., Xiong, C., &amp; Joty, S. (2024). FaithEval: Can Your Language Model Stay Faithful to Context, Even If 'The Moon is Made of Marshmallows'? arXiv preprint arXiv:2410.03727.
+Qwen Team. (2024). Qwen2.5: A Party of Foundation Models. Technical Report, Alibaba Group.
+Rajpurkar, P., Zhang, J., Lopyrev, K., &amp; Liang, P. (2016). SQuAD: 100,000+ Questions for Machine Comprehension of Text. Proceedings of EMNLP 2016, 2383–2392.
+Appendix
+Appendix A: Reproducibility Instructions &amp; Code Execution Guide
+All code, configuration files, and evaluation scripts are packaged in the accompanying submission archive (SC4001_Misleading_Evidence_Detector-main/). The pipeline was tested on Python 3.11 with PyTorch (MPS/CUDA auto-detected), HuggingFace Transformers, Datasets, scikit-learn, and spaCy.
+A.1 Environment Setup
+uv venv -p 3.11 .venvuv pip install -p .venv torch transformers datasets accelerate scikit-learn pandas matplotlib spacy sentencepiece protobuf tqdmuv pip install -p .venv &quot;en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl&quot;
+A.2 End-to-End Execution Commands
+# Step 1-3: Single-passage data generation, training (13 runs), attribution &amp; tables ./run_all.sh # Step 4: Cross-document reference extraction, training &amp; calibration ./run_xdoc.sh .venv/bin/python src/calibrate.py
+Table A1: Overview of source modules and outputs.
+Script / Directory
+Role in Pipeline
+src/build_data.py
+Article-level SQuAD split, spaCy NER typing, rule swaps, bystander &amp; placebo construction
+src/llm_fakes.py
+Resumable Qwen2.5-1.5B-Instruct rewrite generation with length &amp; entity validity filters
+src/make_sets.py
+Assembles balanced train/dev/test JSONL sets across base, pair, and placebo regimes + NQ-Swap/FaithEval
+src/train_eval.py
+Fine-tunes cross-encoder/nli-deberta-v3-small with MPS memory optimizations &amp; dev macro-F1 selection
+src/attribution.py
+Computes gradient×input attribution share on edited spans under true vs. bystander questions
+src/analyze.py
+Computes TPR, FAR_orig, FAR_by, FAR_pl, CS, AUROC, and 2×2 DiD into results/*.csv
+src/xdoc_refs.py &amp; make_sets_xdoc.py
+Retrieves top-2 IDF 2-sentence windows from other article paragraphs (good &amp; BM25 keyword modes)
+src/analyze_xdoc.py &amp; calibrate.py
+Evaluates corroborated vs. non-corroborated slices and calibrates thresholds to 10% dev FAR
+Appendix B: Plain vs. NLI-Pretrained Backbone Diagnostics
+Prior to selecting cross-encoder/nli-deberta-v3-small, we evaluated an unadapted microsoft/deberta-v3-small checkpoint across four single-passage configurations (runs_plain_deberta/). Across 3 epochs of fine-tuning on ~1,135 records, the plain backbone learned to separate irrelevant passages (class 2) from relevant ones, but failed to separate supporting (class 0) from misleading (class 1) passages—stalling at cross-entropy loss ≈ 0.46 and supporting-vs-misleading AUROC ≈ 0.50. Initializing from an NLI-pretrained cross-encoder provides an existing premise–hypothesis contradiction representation that transfers effectively to small-sample evidence verification.

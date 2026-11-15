@@ -6,3 +6,10 @@ runs/*/model/
 runs_plain_deberta/*/model/
 # generated data (rebuild with run_all.sh)
 data/
+
+# Word lock files and old report drafts
+~$*
+docs/SC4001_Group167_Report.docx
+docs/SC4001_Group167_Report.pdf
+docs/SC4001_Group167_Report_v2.*
+docs/build_report.js
